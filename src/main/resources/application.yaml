@@ -1,6 +1,18 @@
 spring:
   application:
     name: budgeting
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
   ai:
     ollama:
       base-url: http://localhost:11434
