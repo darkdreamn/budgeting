@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 
 @Service
 public class BudgetingService {
@@ -19,6 +21,8 @@ public class BudgetingService {
     }
 
     public String processCommand(String textCommand) {
+        textCommand = textCommand.replace("\"", "").trim();
+
         String contextualizedPrompt =
                 "Você é um assistente de finanças focado em ajudar o usuário. " +
                         "O usuário enviou o seguinte comando: " + textCommand +
@@ -52,5 +56,9 @@ public class BudgetingService {
             finalAnswer = finalAnswer + "(Nota: Não consegui registrar esse gasto automaticamente no seu banco de dados).";
         }
         return finalAnswer;
+    }
+
+    public List<Transaction> getAllTransactions() {
+        return transactionRepository.findAll();
     }
 }

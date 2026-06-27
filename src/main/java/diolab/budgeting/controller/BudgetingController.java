@@ -1,8 +1,11 @@
 package diolab.budgeting.controller;
 
+import diolab.budgeting.model.Transaction;
 import diolab.budgeting.service.BudgetingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/budget")
@@ -17,5 +20,10 @@ public class BudgetingController {
     public ResponseEntity<String> sendCommand(@RequestBody String textCommand) {
         String responseIA = service.processCommand(textCommand);
         return ResponseEntity.ok(responseIA);
+    }
+
+    @GetMapping("/transactions")
+    public List<Transaction> listAll() {
+        return service.getAllTransactions();
     }
 }
