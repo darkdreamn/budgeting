@@ -29,19 +29,28 @@ public class BudgetingService {
                 "Exemplo: 50.00,Alimentação. Texto: " + textCommand;
 
         String extractedData = chatModel.call(extractionPrompt);
-        String[] valuesExtractedData = extractedData.split(",");
+        String finalAnswer = chatModel.call(contextualizedPrompt);
 
-        if (valuesExtractedData.length >= 2) {
-            String valueText = valuesExtractedData[0].trim();
-            String typeText = valuesExtractedData[1].trim();
+        try {
+            String[] valuesExtractedData = extractedData.split(",");
 
-            java.math.BigDecimal convertedValue = new java.math.BigDecimal(valueText);
+            if (valuesExtractedData.length >= 2) {
+                String valueText = valuesExtractedData[0].trim();
+                String typeText = valuesExtractedData[1].trim();
 
-            Transaction newTransaction = new Transaction(textCommand, convertedValue, typeText);
+                java.math.BigDecimal convertedValue = new java.math.BigDecimal(valueText);
 
-            transactionRepository.save(newTransaction);
+                Transaction newTransaction = new Transaction(textCommand, convertedValue, typeText);
+
+                transactionRepository.save(newTransaction);
+            } else {
+                System.out.println("Aviso: Formato de extração inválido da IA: " + extractedData);
+                finalAnswer = finalAnswer + "(Nota: Não consegui registrar esse gasto automaticamente no seu banco de dados).";
+            }
+        } catch (NumberFormatException | NullPointerException e) {
+            System.err.println("Erro ao salvar transação: Não foi possível converter o valor extraído pela IA. Resposta da IA: " + extractedData);
+            finalAnswer = finalAnswer + "(Nota: Não consegui registrar esse gasto automaticamente no seu banco de dados).";
         }
-
-        return chatModel.call(contextualizedPrompt);
+        return finalAnswer;
     }
 }
